@@ -1,0 +1,16 @@
+.window {
+
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 100px;
+    justify-content: space-between;
+    border-top-right-radius: 8px; 
+
+}
+.close-btn{
+    display: flex;
+    align-items: center;
+    color: black;
+}
