@@ -9,6 +9,7 @@ import { React, useEffect, useState, useMemo } from "react";
 
 
 export default function SideBar(props) {
+  
   const [click, setClick] = useState({
     openInput: false,
     closeInput: true,
@@ -114,9 +115,9 @@ export default function SideBar(props) {
         {props.notes.map((note, index) => (
           <Notes
             key={index}
-            id={note.id}
-            title={note.title}
-            handleClick={props.openWindow}
+            noteId={note.note_id}
+            title={note.note_title}
+            openNewNoteEditor = {props.openEditor}
             // define the function of opening a new editor associated with the current Note in side baar
           />
         ))}

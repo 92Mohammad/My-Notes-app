@@ -20,9 +20,6 @@ export default function Editor() {
     setComment(value);
   };
 
-  console.log(comment)
-
-
   return (
     <>
       <div className="editor-container">

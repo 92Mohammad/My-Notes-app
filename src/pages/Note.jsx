@@ -4,23 +4,45 @@ import Window from '../components/Window'
 import Editor from '../components/Editor'
 import '../css/note.css'
 import { useState, useEffect } from 'react'
+import { FaJournalWhills } from 'react-icons/fa'
+// 1) if tab.length == 0 then this is current tab otherwise current tab will be one that the user will click
+
 
 
 export default function Note() {
     const [notes, setNotes] = useState([]);
-
-    const [windows, setWindows] = useState([])
+    const [editor, setEditor] = useState([])
     const [isTabOpen, setIsTabOpen] = useState(false)
 
-    function openWindow(Title, Id, setIsOpen) {
-        setWindows(prevWindow => [...prevWindow, { title: Title, id: Id }])
-        setIsOpen((prevOpen) => !prevOpen)
+ 
+    const [tabs, setTabs] = useState([])
+    
+    const openEditor = (Title, Id) => {
+        setEditor((prevEditor) => [...prevEditor, {}])
     }
+    
+    const getAllOpenTab = async() => {
+        try {
+            const response = await fetch('http://localhost:8000/getAllOpenTab', {
+                method : 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
 
+            if (response.status === 200){
+                const data = await response.json();
+                setTabs(data);
+            }
+        }
+        catch(error){
+            console.log(error);
+        }
+    } 
     useEffect(() => {
-
-
-    })
+        // calling the getAllOpenTab functio to get the open tab list
+        getAllOpenTab();
+    }, [])
 
     useEffect(() => {
         const token = localStorage.getItem("jwtToken")
@@ -54,20 +76,21 @@ export default function Note() {
 
     return (
         <main>
-            <SideBar notes={notes} openWindow={openWindow} />
+            <SideBar notes={notes}  openNewNoteEditor = {openEditor} />
             <div className='rigth-section'>
                 <div className='window-container'>
-                    {windows.map((window, index) => {
-                        return <Window key={index} title={window.title} />
+                    {tabs.map((tab, index) => {
+                        return <Window key={index} noteId = {tab.note_id} title={tab.note_title}/>
                     })}
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
-                    {isTabOpen ? <Editor /> : <EditorBackground />}
+                    {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}
+                    <Editor/>
 
                 </div>
             </div>
         </main>
-    )
+    )       
 }
 
 

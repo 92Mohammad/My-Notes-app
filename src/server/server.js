@@ -18,6 +18,7 @@ app.post('/signup', (req, res) => {
     const { email, password, confirmPassword } = req.body;
     console.log(email, password)
 
+
     if (password !== confirmPassword) {
         return res.json({ message: "Incorrect! password" })
 
@@ -80,7 +81,7 @@ app.post('/login', async (req, res) => {
 
                 if (await bcrypt.compare(password, userPassword)) {
                     // lets create a token so that we can identify the user in future request
-                    const userId = { userId: results[0].id }
+                    const userId = { userId: results[0].user_id }
                     const token = jwt.sign(userId, process.env.JWT_SECRET)
 
                     return res.status(201).send({ jwtToken: token })
@@ -172,12 +173,15 @@ app.get('/notes', auth, (req, res) => {
 })
 
 
+// below route is setup for creating new notes in database
+
 app.post('/postNotes', auth, (req, res) => {
+    console.log("post rotue hits")
     const noteTitle = req.body.title
     const userId = req.userId
-    const sql = 'INSERT INTO notes(title, userId) VALUES(?, ?)'
+    const sql = 'INSERT INTO notes(note_title, userId) VALUES(?, ?)'
     connection.query(sql, [noteTitle, userId], (err, results) => {
-        if (err) {
+        if (err) {  
             console.log("Query failed: ", err.message)
             return res.status(500).send({ message: "Query failed" })
         }
@@ -192,7 +196,7 @@ app.post('/deleteNote', auth, (req, res) => {
 
     const noteId = req.body.noteId
     // const title = req.body.title
-    const sql = 'DELETE FROM notes WHERE id = ?'
+    const sql = 'DELETE FROM notes WHERE note_id = ?'
     connection.query(sql, [noteId], (err, results) => {
         if (err) {
             console.log("Query failed: ", err.message)
@@ -206,6 +210,50 @@ app.post('/deleteNote', auth, (req, res) => {
 })
 
 
+app.get('/getAllOpenTab', (req, res) => {
+
+    const sql = 'SELECT note_id, note_title FROM notes WHERE isOpenTab = 1';
+    connection.query(sql, (error, results) => {
+        if(error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            return res.status(200).send(results);
+        }
+    })
+})
+
+app.post('/postNewOpenTab', (req, res) => {
+
+    const noteId = req.body.note_id;
+    // now set the isTabOpen column as true in notes table so that we can identify that which tab is opened
+    const sql = 'UPDATE notes SET isOpenTab = ?  WHERE note_id = ?'
+    connection.query(sql, [true, noteId], (error, results) => {
+        if (error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            return res.status(200).send({message: "Tab opened successfully"})
+        }
+    })    
+})
+
+app.post('/closeOpenTab', (req, res) => {
+    const noteId = req.body.note_id;
+    const sql = 'UPDATE notes SET isOpenTab = ? WHERE note_id = ?'
+    connection.query(sql, [false, noteId], (error, results) => {
+        if (error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            return res.status(200).send({message: "tab closed successfully"})
+
+        }
+    })
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
