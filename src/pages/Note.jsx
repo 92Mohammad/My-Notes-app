@@ -80,7 +80,7 @@ export default function Note() {
             <div className='rigth-section'>
                 <div className='window-container'>
                     {tabs.map((tab, index) => {
-                        return <Window key={index} noteId = {tab.note_id} title={tab.note_title}/>
+                        return <Window key={index} noteId = {tab.note_id} title={tab.note_title} currentTab = {tab.currentTab}/>
                     })}
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
