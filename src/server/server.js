@@ -255,6 +255,47 @@ app.post('/closeOpenTab', (req, res) => {
     })
 })
 
+app.post('/setCurrentTab', (req, res) => {
+    const noteId = req. body.note_id
+    // make the value of currentTab as true for the given noteId and make rest fo the currentTab column as false
+    const sql1 = 'UPDATE notes SET currentTab = ?'
+    connection.query(sql1, [false], (error) => {
+        if (error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            // if query does not fail it means that all value in currentTab column has been set to flase or 0
+            // now make a new query to set the value of currentTab which have note_id = noteId as true or 1
+            const sql2 = 'UPDATE notes SET currentTab = ? WHERE note_id = ?'
+            connection.query(sql2, [true, noteId], (error) => {
+                if (error){
+                    console.log(error.message);
+                    return res.status(500).json({message: "Query failed"})
+                }
+                else {
+                    return res.status(200).send({message: "Current tab has been set successfully"})
+                }       
+            })
+        }
+    })
+})
+
+
+
+app.get('/getCurrentTab', (req, res) => {
+    const query = 'SELECT note_id, currentTab from notes WHERE currentTab = ?'
+    connection.query(query, [true], (error, results) => {
+        if (error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            return res.status(200).send(results[0]);
+        }
+    })    
+})
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })
