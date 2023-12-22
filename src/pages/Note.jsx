@@ -1,20 +1,15 @@
 import React from 'react'
-import SideBar from '../components/SideBar'
-import Window from '../components/Window'
+import SideBar from '../components/SideBar' // this is child2
+import Window from '../components/Window'   // this is child1 
 import Editor from '../components/Editor'
 import '../css/note.css'
 import { useState, useEffect } from 'react'
-import { FaJournalWhills } from 'react-icons/fa'
-// 1) if tab.length == 0 then this is current tab otherwise current tab will be one that the user will click
 
 
 
 export default function Note() {
-    const [notes, setNotes] = useState([]);
     const [editor, setEditor] = useState([])
-    const [isTabOpen, setIsTabOpen] = useState(false)
 
- 
     const [tabs, setTabs] = useState([])
     
     const openEditor = (Title, Id) => {
@@ -52,40 +47,22 @@ export default function Note() {
     }, [])
 
 
-    const getAllNotes = async () => {
-        try {
-            const res = await fetch("http://localhost:8000/notes", {
-                method: "GET",
-                headers: {
-                    authorization: localStorage.getItem("jwtToken"),
-                },
-            });
-
-            if (res.status === 200) {
-                const data = await res.json();
-                setNotes(data);
-            }
-        } catch (error) {
-            console.log(error.message);
-        }
-    };
-
-    useEffect(() => {
-        getAllNotes();
-    }, []);
-
+    
     return (
         <main>
-            <SideBar notes={notes}  openNewNoteEditor = {openEditor} />
+            <SideBar getAllOpenTab = {getAllOpenTab} openNewNoteEditor = {openEditor} />
             <div className='rigth-section'>
-                <div className='window-container'>
-                    {tabs.map((tab, index) => {
-                        return <Window key={index} noteId = {tab.note_id} title={tab.note_title} currentTab = {tab.currentTab}/>
-                    })}
+                <div className='tabs-and-save-btn'>
+                    <div className='window-container'>
+                        {tabs.map((tab, index) => {
+                            return <Window key={index} noteId = {tab.note_id} title={tab.note_title} currentTab = {tab.currentTab} getAllOpenTab = {getAllOpenTab} />
+                        })}
+                    </div>
+                    <div className='save-content-btn-div'><button className='save-content-btn'>Save</button></div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
                     {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}
-                    <Editor/>
+                    <Editor />
 
                 </div>
             </div>
