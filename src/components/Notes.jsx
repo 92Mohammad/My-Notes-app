@@ -2,13 +2,11 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import "../css/sidebar.css";
 import { useState } from 'react'
 
-
-
 export default function Notes(props) {
   const [isOpen , setIsOpen] = useState(true)
 
+
   const postNewOpenTab = async(noteId) => {
-    console.log('inside open new tab : ', noteId)
     try {
       const response = await fetch('http://localhost:8000/postNewOpenTab' ,{
         method: "POST",
@@ -19,8 +17,10 @@ export default function Notes(props) {
           note_id: noteId})
       })  
       if (response.status === 200){
-        window.location.href = '/notes'
-      }
+        props.getAllOpenTab();
+        // how can i call the seAscurrentTab function over here 
+
+      } 
     }
     catch(error){
       console.log(error);
@@ -53,11 +53,9 @@ export default function Notes(props) {
                 }),
               });
 
-              // const data = await response.json();
               if (response.status === 201) {
-                // means that notes deleted successfully
-                //so navigate the user again on the /note page so that react re-render the side bar with upddated notes
-                window.location.href = "/notes";
+                // here change the notes state so that react re-render the Note component
+                props.getAllNotes();
               }
             } catch (error) {
               console.log(error);

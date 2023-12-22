@@ -15,7 +15,7 @@ export default function SideBar(props) {
     closeInput: true,
   });
 
-
+  const [notes, setNotes] = useState([]);
   const [logout, setLogout] = useState(false);
 
   function openInputBox() {
@@ -29,7 +29,6 @@ export default function SideBar(props) {
   }
 
   const createNotes = async (Title) => {
-    console.log("this is title from client side: ", Title);
     try {
       const response = await fetch("http://localhost:8000/postNotes", {
         method: "POST",
@@ -48,12 +47,39 @@ export default function SideBar(props) {
             openInput: !prevClick.openInput,
           };
         });
-        window.location.href = "/notes";
+        // when a new note added successfully then call the getAllNotes method to fetch the all notes along with the new notes
+        getAllNotes();
+        
       }
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  
+  const getAllNotes = async () => {
+    try {
+        const res = await fetch("http://localhost:8000/notes", {
+            method: "GET",
+            headers: {
+                authorization: localStorage.getItem("jwtToken"),
+            },
+        });
+
+        if (res.status === 200) {
+            const data = await res.json();
+            setNotes(data);
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+  useEffect(() => {
+    getAllNotes();
+    // setNotes()
+
+  }, []);
 
  
 
@@ -69,7 +95,7 @@ export default function SideBar(props) {
           authorization: localStorage.getItem("jwtToken"),
         },
       });
-      if (response.status === 200) {
+      if (response.status === 200) {  
         //means that user successfully logout
         //  delete the token from localStorage
         localStorage.removeItem("JwtToekn");
@@ -112,11 +138,13 @@ export default function SideBar(props) {
           {click.openInput && <InputBox createNotes={createNotes} />}
           {click.closeInput && <CreateNoteButton openInputBox={openInputBox} />}
         </div>
-        {props.notes.map((note, index) => (
+        {notes.map((note, index) => (
           <Notes
             key={index}
             noteId={note.note_id}
             title={note.note_title}
+            getAllOpenTab = {props.getAllOpenTab} 
+            getAllNotes = {getAllNotes}
             openNewNoteEditor = {props.openEditor}
             // define the function of opening a new editor associated with the current Note in side baar
           />

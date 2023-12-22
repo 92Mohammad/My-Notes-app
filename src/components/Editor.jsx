@@ -1,29 +1,24 @@
 import "../css/editor.css";
 
-// import {
-//   FaBold,
-//   FaItalic,
-//   FaUnderline,
-//   FaListUl,
-//   FaListOl,
-// } from "react-icons/fa";
-//  1) use readOnly property in text area
-//  2) use defaultValue => which is similiar to placeholder
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 export default function Editor() {
   const [comment, setComment] = useState('');
+  console.log(comment)
 
   const handleChange = (value) => {
     setComment(value);
   };
 
+
+
   return (
     <>
       <div className="editor-container">
         <ReactQuill
+          contentEditable = "false"
           className="editor"        
           value={comment}
           onChange={handleChange}

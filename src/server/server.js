@@ -176,7 +176,7 @@ app.get('/notes', auth, (req, res) => {
 // below route is setup for creating new notes in database
 
 app.post('/postNotes', auth, (req, res) => {
-    console.log("post rotue hits")
+
     const noteTitle = req.body.title
     const userId = req.userId
     const sql = 'INSERT INTO notes(note_title, userId) VALUES(?, ?)'
@@ -212,7 +212,7 @@ app.post('/deleteNote', auth, (req, res) => {
 
 app.get('/getAllOpenTab', (req, res) => {
 
-    const sql = 'SELECT note_id, note_title FROM notes WHERE isOpenTab = 1';
+    const sql = 'SELECT note_id, note_title, currentTab FROM notes WHERE isOpenTab = 1';
     connection.query(sql, (error, results) => {
         if(error){
             console.log(error.message);
@@ -279,21 +279,6 @@ app.post('/setCurrentTab', (req, res) => {
             })
         }
     })
-})
-
-
-
-app.get('/getCurrentTab', (req, res) => {
-    const query = 'SELECT note_id, currentTab from notes WHERE currentTab = ?'
-    connection.query(query, [true], (error, results) => {
-        if (error){
-            console.log(error.message);
-            return res.status(500).json({message: "Query failed"})
-        }
-        else {
-            return res.status(200).send(results[0]);
-        }
-    })    
 })
 
 app.listen(PORT, () => {
