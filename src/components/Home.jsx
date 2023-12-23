@@ -3,12 +3,20 @@ import NavBar from "./NavBar";
 import "../css/home.css";
 import background from "../images/student-study-table.jpg";
 import { Link } from "react-router-dom";
+import { useEffect } from 'react'
 export default function Home() {
+  // when user is login user close the tab and when user come back it should be on the notes page because it was not logout
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token){
+      window.location.href = '/notes';
+    }
+
+  }, [])
 
   return (
     <>
       <NavBar isHome = {true}/>
-
       <main className="home-page">
         <div className="main-content">
           <div className="left-section">
