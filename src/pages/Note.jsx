@@ -96,6 +96,10 @@ export default function Note() {
     getContent();
   }, [])
 
+
+
+  
+
     return (
         <main>
             <SideBar getAllOpenTab = {getAllOpenTab} openNewNoteEditor = {openEditor} />

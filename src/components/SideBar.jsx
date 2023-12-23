@@ -98,7 +98,7 @@ export default function SideBar(props) {
       if (response.status === 200) {  
         //means that user successfully logout
         //  delete the token from localStorage
-        localStorage.removeItem("JwtToekn");
+        localStorage.removeItem("jwtToken");
 
         // navigate the user to home page
         window.location.href = "/";
@@ -107,6 +107,8 @@ export default function SideBar(props) {
       console.log(error.message);
     }
   };
+
+
 
 
   return (
