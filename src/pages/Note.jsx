@@ -11,6 +11,11 @@ export default function Note() {
     const [editor, setEditor] = useState([])
 
     const [tabs, setTabs] = useState([])
+
+    const [content , setContent] = useState('');
+    const handleChange = (value) => {
+        setContent(value);  
+      };
     
     const openEditor = (Title, Id) => {
         setEditor((prevEditor) => [...prevEditor, {}])
@@ -46,8 +51,51 @@ export default function Note() {
         }
     }, [])
 
+    const saveContent = async() => {
+        try{
+            // first find the note_id of the current tab
+            const currentTab = tabs.filter((tab) => tab.currentTab === 1)
+            const noteIdOfCurrentTab = currentTab[0].note_id;
+
+
+            const response = await fetch('http://localhost:8000/saveContent', {
+                method: 'POST',
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    noteContent: content,
+                    noteId: noteIdOfCurrentTab
+                })
+            })
+        }
+        catch(error){
+            console.log(error)
+        }
+    }
+
 
     
+  const getContent = async() => {
+    try {
+      const response = await fetch('http://localhost:8000/getContent', {
+        method: "GET"
+      })
+      if (response.status === 200){
+        const contentData = await response.json();
+        const noteContent = contentData.note_content;
+        setContent(noteContent);
+      }
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getContent();
+  }, [])
+
     return (
         <main>
             <SideBar getAllOpenTab = {getAllOpenTab} openNewNoteEditor = {openEditor} />
@@ -55,14 +103,14 @@ export default function Note() {
                 <div className='tabs-and-save-btn'>
                     <div className='window-container'>
                         {tabs.map((tab, index) => {
-                            return <Window key={index} noteId = {tab.note_id} title={tab.note_title} currentTab = {tab.currentTab} getAllOpenTab = {getAllOpenTab} />
+                            return <Window key={index} noteId = {tab.note_id} title={tab.note_title} currentTab = {tab.currentTab} getAllOpenTab = {getAllOpenTab} getContent = {getContent} />
                         })}
                     </div>
-                    <div className='save-content-btn-div'><button className='save-content-btn'>Save</button></div>
+                    <div className='save-content-btn-div'><button onClick = {saveContent}className='save-content-btn'>Save</button></div>
                 </div>
                 <div className='Writes-and-edit-notes-contianer'>
                     {/* {isTabOpen ? <Editor /> : <EditorBackground />} */}
-                    <Editor />
+                    <Editor content = {content} handleChange = {handleChange}/>
 
                 </div>
             </div>

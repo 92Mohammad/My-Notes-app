@@ -281,6 +281,41 @@ app.post('/setCurrentTab', (req, res) => {
     })
 })
 
+app.post('/saveContent', (req, res) => {
+    const {noteContent, noteId} = req.body;
+    //note_content  
+    const sql = 'UPDATE notes SET note_content = ?  WHERE note_id = ?'
+    connection.query(sql, [noteContent, noteId] , (error, results) => {
+        if (error){
+            console.log(error.message);
+            return res.status(500).json({message: "Query failed"})
+        }
+        else {
+            return res.status(200).send({message: "Content saved successfully"})
+        }
+    })
+})
+
+app.get('/getContent', async (req, res) => {
+    // return the note_content of currentTab(or where currentTab == true)
+    try {
+        const sql = 'SELECT note_content FROM notes WHERE currentTab = ?'
+        connection.query(sql, [true], (error, results) => {
+            if (error) {
+                console.log(error.message)
+                return res.status(500).json({ message: "Query failed" })
+            }
+            else {
+                return res.status(200).send(results[0])
+            }
+        })
+    }
+    catch(error){
+        console.log(error);
+    }   
+})
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })

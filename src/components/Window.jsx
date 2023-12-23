@@ -27,7 +27,6 @@ export default function Window(props){
    
 
     const setAsCurrentTab = async(noteId) => {
-        console.log('callSetAsCurrentTab function called')
         try{
             const response = await fetch('http://localhost:8000/setCurrentTab', {
                 method: "POST", 
@@ -39,7 +38,12 @@ export default function Window(props){
                 })
             })
             if (response.status === 200){ 
+                // here when getAllOpenTab function will call it will get the new currentTab so React Dom will 
+                // change the prev current tab to new current tab. 
                 await props.getAllOpenTab();
+                // here I have to call the getContent method so that when currentTab change 
+                // it should get the content of new currentTab
+                props.getContent();
             }
         }
         catch(error){

@@ -1,27 +1,16 @@
 import "../css/editor.css";
-
-import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-export default function Editor() {
-  const [comment, setComment] = useState('');
-  console.log(comment)
-
-  const handleChange = (value) => {
-    setComment(value);
-  };
-
-
+export default function Editor({content, handleChange}) {
 
   return (
     <>
       <div className="editor-container">
         <ReactQuill
-          contentEditable = "false"
           className="editor"        
-          value={comment}
-          onChange={handleChange}
+          value={content}
+          onChange={(value) => handleChange(value)}
           modules={{
             toolbar: [
               [{ header: [1, 2, false] }],
